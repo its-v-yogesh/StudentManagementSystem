@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}
+Attendance - {{ student["name"] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>Attendance</h1>
+
+        <p>
+            {{ student["name"] }}
+            — Roll No: {{ student["rollno"] }}
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('student_details', student_id=student['id']) }}"
+        class="btn btn-secondary"
+    >
+        ← Back
+    </a>
+
+</div>
+
+
+<div class="dashboard-grid">
+
+    <!-- Current Attendance -->
+
+    <div class="card attendance-card">
+
+        <h3>Current Attendance</h3>
+
+        <div class="attendance-circle"
+             style="--attendance: {{ attendance['percentage'] }};">
+
+            <div class="attendance-circle-inner">
+
+                <strong>
+                    {{ attendance["percentage"] }}%
+                </strong>
+
+                <span>Attendance</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Update Attendance -->
+
+    <div class="card form-card">
+
+        <h3>Update Attendance</h3>
+
+        <form
+            method="POST"
+            action="{{ url_for('attendance', student_id=student['id']) }}"
+        >
+
+            <div class="form-group">
+
+                <label for="total_classes">
+                    Total Classes
+                </label>
+
+                <input
+                    type="number"
+                    id="total_classes"
+                    name="total_classes"
+                    min="0"
+                    value="{{ attendance['total_classes'] }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="attended_classes">
+                    Classes Attended
+                </label>
+
+                <input
+                    type="number"
+                    id="attended_classes"
+                    name="attended_classes"
+                    min="0"
+                    value="{{ attendance['attended_classes'] }}"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Save Attendance
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h3>Attendance Information</h3>
+
+    <div class="stats-list">
+
+        <div class="stats-row">
+
+            <span>Total Classes</span>
+
+            <strong>
+                {{ attendance["total_classes"] }}
+            </strong>
+
+        </div>
+
+
+        <div class="stats-row">
+
+            <span>Present</span>
+
+            <strong>
+                {{ attendance["attended_classes"] }}
+            </strong>
+
+        </div>
+
+
+        <div class="stats-row">
+
+            <span>Absent</span>
+
+            <strong>
+                {{
+                    attendance["total_classes"]
+                    -
+                    attendance["attended_classes"]
+                }}
+            </strong>
+
+        </div>
+
+
+        <div class="stats-row">
+
+            <span>Percentage</span>
+
+            <strong>
+                {{ attendance["percentage"] }}%
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

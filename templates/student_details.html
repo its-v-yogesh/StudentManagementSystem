@@ -1,0 +1,741 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ student.name }} | Student Details
+{% endblock %}
+
+{% block content %}
+
+<div class="student-details-page">
+
+    <!-- =====================================
+         PAGE HEADER
+    ====================================== -->
+
+    <div class="details-header">
+
+        <div>
+            <p class="eyebrow">
+                STUDENT PROFILE
+            </p>
+
+            <h1>
+                Student Details
+            </h1>
+
+            <p class="muted">
+                Complete student information and academic overview
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('students_page') }}"
+            class="secondary-btn"
+        >
+            ← Back to Students
+        </a>
+
+    </div>
+
+
+    <!-- =====================================
+         STUDENT PROFILE CARD
+    ====================================== -->
+
+    <div class="profile-card">
+
+        <!-- PHOTO -->
+
+        <div class="student-photo-section">
+
+            {% if student.photo %}
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='uploads/' + student.photo
+                    ) }}"
+                    class="student-profile-photo"
+                    alt="{{ student.name }}"
+                >
+
+            {% else %}
+
+                <div class="student-profile-placeholder">
+                    {{ student.name[0]|upper }}
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- STUDENT INFORMATION -->
+
+        <div class="student-profile-info">
+
+            <p class="eyebrow">
+                STUDENT
+            </p>
+
+            <h2>
+                {{ student.name }}
+            </h2>
+
+
+            <div class="profile-details">
+
+                <div>
+                    <span>Roll Number</span>
+
+                    <strong>
+                        {{ student.rollno }}
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>Email</span>
+
+                    <strong>
+                        {{ student.email }}
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>Course</span>
+
+                    <strong>
+                        {{ student.course }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- ACTION BUTTONS -->
+
+            <div class="profile-actions">
+
+                <a
+                    href="{{ url_for(
+                        'edit',
+                        student_id=student.id
+                    ) }}"
+                    class="edit-btn"
+                >
+                    ✏ Edit Student
+                </a>
+
+
+                <a
+                    href="{{ url_for(
+                        'attendance',
+                        student_id=student.id
+                    ) }}"
+                    class="attendance-btn"
+                >
+                    📊 Attendance
+                </a>
+
+
+                <a
+                    href="{{ url_for(
+                        'result',
+                        student_id=student.id
+                    ) }}"
+                    class="result-btn"
+                >
+                    📝 Result
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         ATTENDANCE HEADER
+    ====================================== -->
+
+    <div class="section-heading">
+
+        <div>
+
+            <p class="eyebrow">
+                ATTENDANCE
+            </p>
+
+            <h2>
+                Attendance Overview
+            </h2>
+
+            <p class="muted">
+                Student attendance percentage and class summary
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for(
+                'attendance',
+                student_id=student.id
+            ) }}"
+            class="primary-btn"
+        >
+            + Update Attendance
+        </a>
+
+    </div>
+
+
+    <!-- =====================================
+         ATTENDANCE
+    ====================================== -->
+
+    <div class="attendance-grid">
+
+        <!-- ATTENDANCE CIRCLE -->
+
+        <div class="card attendance-card">
+
+            <h3>
+                Attendance Percentage
+            </h3>
+
+
+            <div
+                class="attendance-circle"
+                data-percentage="{{ attendance_percentage }}"
+            >
+
+                <div class="attendance-circle-inner">
+
+                    <strong>
+                        {{ attendance_percentage }}%
+                    </strong>
+
+                    <span>
+                        Attendance
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ATTENDANCE SUMMARY -->
+
+        <div class="card">
+
+            <h3>
+                Attendance Summary
+            </h3>
+
+
+            <div class="stats-list">
+
+                <div class="stats-row">
+
+                    <span>
+                        Total Classes
+                    </span>
+
+                    <strong>
+                        {{ total_classes }}
+                    </strong>
+
+                </div>
+
+
+                <div class="stats-row">
+
+                    <span>
+                        Classes Attended
+                    </span>
+
+                    <strong>
+                        {{ present_classes }}
+                    </strong>
+
+                </div>
+
+
+                <div class="stats-row">
+
+                    <span>
+                        Classes Absent
+                    </span>
+
+                    <strong>
+                        {{ absent_classes }}
+                    </strong>
+
+                </div>
+
+
+                <div class="stats-row">
+
+                    <span>
+                        Attendance
+                    </span>
+
+                    <strong>
+                        {{ attendance_percentage }}%
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         ATTENDANCE GRAPH
+    ====================================== -->
+
+    <div class="card graph-card">
+
+        <h3>
+            Attendance Graph
+        </h3>
+
+        <p class="graph-description">
+            Present vs absent classes
+        </p>
+
+
+        <div class="attendance-bar-chart">
+
+
+            <!-- PRESENT -->
+
+            <div class="chart-column">
+
+                <strong class="chart-value">
+                    {{ present_classes }}
+                </strong>
+
+
+                <div
+                    class="chart-bar present-bar"
+                    data-height="{{ present_percentage }}"
+                ></div>
+
+
+                <span>
+                    Present
+                </span>
+
+
+                <strong>
+                    {{ present_percentage }}%
+                </strong>
+
+            </div>
+
+
+            <!-- ABSENT -->
+
+            <div class="chart-column">
+
+                <strong class="chart-value">
+                    {{ absent_classes }}
+                </strong>
+
+
+                <div
+                    class="chart-bar absent-bar"
+                    data-height="{{ absent_percentage }}"
+                ></div>
+
+
+                <span>
+                    Absent
+                </span>
+
+
+                <strong>
+                    {{ absent_percentage }}%
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         RESULT HEADER
+    ====================================== -->
+
+    <div class="result-section">
+
+        <div class="result-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    ACADEMIC PERFORMANCE
+                </p>
+
+                <h2>
+                    Result & Marks
+                </h2>
+
+                <p class="muted">
+                    View and manage student's academic results
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ url_for(
+                    'result',
+                    student_id=student.id
+                ) }}"
+                class="primary-btn"
+            >
+                + Add / Update Result
+            </a>
+
+        </div>
+
+
+        <!-- =================================
+             RESULT TABLE
+        ================================== -->
+
+        {% if results %}
+
+            <div class="card table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Subject
+                            </th>
+
+                            <th>
+                                Marks
+                            </th>
+
+                            <th>
+                                Maximum
+                            </th>
+
+                            <th>
+                                Percentage
+                            </th>
+
+                            <th>
+                                Grade
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in results %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        {{ item.subject }}
+                                    </strong>
+                                </td>
+
+
+                                <td>
+                                    {{ item.marks }}
+                                </td>
+
+
+                                <td>
+                                    {{ item.max_marks }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if item.max_marks > 0 %}
+
+                                        {{ (
+                                            item.marks
+                                            /
+                                            item.max_marks
+                                            * 100
+                                        ) | round(2) }}%
+
+                                    {% else %}
+
+                                        0%
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if item.max_marks > 0 %}
+
+                                        {% set percentage =
+                                            (
+                                                item.marks
+                                                /
+                                                item.max_marks
+                                                * 100
+                                            )
+                                        %}
+
+                                    {% else %}
+
+                                        {% set percentage = 0 %}
+
+                                    {% endif %}
+
+
+                                    {% if percentage >= 90 %}
+
+                                        {% set grade = "A+" %}
+
+                                    {% elif percentage >= 80 %}
+
+                                        {% set grade = "A" %}
+
+                                    {% elif percentage >= 70 %}
+
+                                        {% set grade = "B+" %}
+
+                                    {% elif percentage >= 60 %}
+
+                                        {% set grade = "B" %}
+
+                                    {% elif percentage >= 50 %}
+
+                                        {% set grade = "C" %}
+
+                                    {% elif percentage >= 40 %}
+
+                                        {% set grade = "D" %}
+
+                                    {% else %}
+
+                                        {% set grade = "F" %}
+
+                                    {% endif %}
+
+
+                                    <span class="grade">
+                                        {{ grade }}
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- NO RESULT -->
+
+            <div class="card empty-result">
+
+                <div class="empty-icon">
+                    📝
+                </div>
+
+                <h3>
+                    No Result Added
+                </h3>
+
+                <p>
+                    Add subjects and marks to see academic
+                    performance here.
+                </p>
+
+
+                <a
+                    href="{{ url_for(
+                        'result',
+                        student_id=student.id
+                    ) }}"
+                    class="primary-btn"
+                >
+                    + Add Result
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================
+         BACK BUTTON
+    ====================================== -->
+
+    <div class="bottom-link">
+
+        <a
+            href="{{ url_for('students_page') }}"
+            class="secondary-btn"
+        >
+            ← Back to All Students
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     GRAPH JAVASCRIPT
+========================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* ================================
+       ATTENDANCE CIRCLE
+    ================================= */
+
+    const circle =
+        document.querySelector(
+            ".attendance-circle"
+        );
+
+
+    if (circle) {
+
+        let percentage =
+            parseFloat(
+                circle.getAttribute(
+                    "data-percentage"
+                )
+            );
+
+
+        if (isNaN(percentage)) {
+            percentage = 0;
+        }
+
+
+        if (percentage < 0) {
+            percentage = 0;
+        }
+
+
+        if (percentage > 100) {
+            percentage = 100;
+        }
+
+
+        circle.style.background =
+            "conic-gradient(" +
+            "#14c9ee 0% " +
+            percentage +
+            "%, " +
+            "rgba(255,255,255,0.08) " +
+            percentage +
+            "% 100%)";
+
+    }
+
+
+    /* ================================
+       ATTENDANCE BAR GRAPH
+    ================================= */
+
+    const bars =
+        document.querySelectorAll(
+            ".chart-bar"
+        );
+
+
+    bars.forEach(function (bar) {
+
+        let percentage =
+            parseFloat(
+                bar.getAttribute(
+                    "data-height"
+                )
+            );
+
+
+        if (isNaN(percentage)) {
+            percentage = 0;
+        }
+
+
+        if (percentage < 0) {
+            percentage = 0;
+        }
+
+
+        if (percentage > 100) {
+            percentage = 100;
+        }
+
+
+        /*
+           Graph maximum height = 210px
+        */
+
+        const maxHeight = 210;
+
+
+        const calculatedHeight =
+            (percentage / 100) *
+            maxHeight;
+
+
+        const finalHeight =
+            Math.max(
+                calculatedHeight,
+                5
+            );
+
+
+        bar.style.height =
+            finalHeight + "px";
+
+    });
+
+});
+
+</script>
+
+
+{% endblock %}

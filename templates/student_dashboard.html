@@ -1,0 +1,442 @@
+{% extends "base.html" %}
+
+{% block title %}
+Student Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="student-dashboard">
+
+    <!-- HERO PROFILE -->
+    <section class="student-dashboard-header">
+
+        {% if student.photo %}
+            <img
+                src="{{ url_for('static', filename='uploads/' ~ student.photo) }}"
+                class="student-profile-photo"
+                alt="Student Photo"
+            >
+        {% else %}
+            <div class="student-profile-placeholder">
+                {{ student.name[0]|upper }}
+            </div>
+        {% endif %}
+
+        <div class="student-profile-info">
+
+            <div class="eyebrow">
+                STUDENT PORTAL
+            </div>
+
+            <h1>
+                Welcome, {{ student.name }} 👋
+            </h1>
+
+            <p>
+                Track your academic performance, attendance and results.
+            </p>
+
+            <div class="student-profile-meta">
+
+                <span class="meta-pill">
+                    Roll No: {{ student.rollno }}
+                </span>
+
+                <span class="meta-pill">
+                    {{ student.course }}
+                </span>
+
+                <span class="meta-pill">
+                    {{ student.email }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- QUICK STATS -->
+    <section class="dashboard-stats">
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-title">
+                    Attendance
+                </span>
+
+                <div class="stat-icon">
+                    ◉
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                {{ attendance.percentage|default(0) }}%
+            </div>
+
+            <div class="stat-description">
+                Overall attendance
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-title">
+                    Present
+                </span>
+
+                <div class="stat-icon">
+                    ✓
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                {{ attendance.attended_classes|default(0) }}
+            </div>
+
+            <div class="stat-description">
+                Classes attended
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-title">
+                    Classes
+                </span>
+
+                <div class="stat-icon">
+                    ◫
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                {{ attendance.total_classes|default(0) }}
+            </div>
+
+            <div class="stat-description">
+                Total classes
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-title">
+                    Results
+                </span>
+
+                <div class="stat-icon">
+                    ★
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                {{ results|length }}
+            </div>
+
+            <div class="stat-description">
+                Subjects available
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MAIN ANALYTICS -->
+    <section class="student-main-grid">
+
+
+        <!-- ATTENDANCE -->
+        <div class="analytics-card" id="attendance">
+
+            <div class="analytics-title">
+
+                <h3>
+                    Attendance Overview
+                </h3>
+
+                <span>
+                    Academic session
+                </span>
+
+            </div>
+
+
+            <div class="attendance-layout">
+
+                <div
+                    class="attendance-gauge"
+                    style="--attendance: {{ attendance.percentage|default(0) }};"
+                >
+
+                    <div class="attendance-gauge-content">
+
+                        <strong>
+                            {{ attendance.percentage|default(0) }}%
+                        </strong>
+
+                        <span>
+                            Attendance
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="attendance-info">
+
+                    <div class="attendance-info-item present">
+
+                        <small>
+                            PRESENT
+                        </small>
+
+                        <strong>
+                            {{ attendance.attended_classes|default(0) }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="attendance-info-item total">
+
+                        <small>
+                            TOTAL CLASSES
+                        </small>
+
+                        <strong>
+                            {{ attendance.total_classes|default(0) }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESULT -->
+        <div class="analytics-card" id="results">
+
+            <div class="analytics-title">
+
+                <h3>
+                    Academic Performance
+                </h3>
+
+                <span>
+                    Result summary
+                </span>
+
+            </div>
+
+
+            <div class="result-overview">
+
+                <div class="result-score">
+
+                    <strong>
+                        {{ result_summary.percentage|default(0) }}%
+                    </strong>
+
+                    <span>
+                        Overall Score
+                    </span>
+
+                </div>
+
+
+                <div class="result-list">
+
+                    {% if results %}
+
+                        {% for result in results %}
+
+                            {% if result.max_marks and result.max_marks > 0 %}
+                                {% set progress = (result.marks / result.max_marks * 100)|round|int %}
+                            {% else %}
+                                {% set progress = 0 %}
+                            {% endif %}
+
+                            <div class="result-row">
+
+                                <div class="result-row-top">
+
+                                    <span class="result-subject">
+                                        {{ result.subject }}
+                                    </span>
+
+                                    <span class="result-marks">
+                                        {{ result.marks }}/{{ result.max_marks }}
+                                    </span>
+
+                                </div>
+
+                                <div class="result-progress">
+
+                                    <div
+                                        class="result-progress-bar"
+                                        style="--progress: {{ progress }}%;"
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty-state">
+
+                            <div class="empty-state-icon">
+                                📚
+                            </div>
+
+                            <h3>
+                                No results yet
+                            </h3>
+
+                            <p>
+                                Your results will appear here.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- STUDENT INFORMATION -->
+    <section class="analytics-card" style="margin-top: 18px;">
+
+        <div class="analytics-title">
+
+            <h3>
+                Student Information
+            </h3>
+
+            <span>
+                Profile details
+            </span>
+
+        </div>
+
+
+        <div class="info-grid">
+
+            <div class="info-card">
+
+                <span>
+                    Full Name
+                </span>
+
+                <strong>
+                    {{ student.name }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span>
+                    Roll Number
+                </span>
+
+                <strong>
+                    {{ student.rollno }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span>
+                    Course
+                </span>
+
+                <strong>
+                    {{ student.course }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span>
+                    Email
+                </span>
+
+                <strong>
+                    {{ student.email }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span>
+                    Total Marks
+                </span>
+
+                <strong>
+                    {{ result_summary.total_marks|default(0) }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <span>
+                    Maximum Marks
+                </span>
+
+                <strong>
+                    {{ result_summary.total_max_marks|default(0) }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

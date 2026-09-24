@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | Student Management
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-home">
+
+    <!-- =========================
+         DASHBOARD HEADER
+    ========================== -->
+
+    <div class="dashboard-header">
+
+        <div class="dashboard-heading">
+
+            <p class="eyebrow">
+                STUDENT PORTAL
+            </p>
+
+            <h1>
+                Dashboard
+            </h1>
+
+            <p class="muted">
+                Manage student records quickly
+                and efficiently.
+            </p>
+
+        </div>
+
+
+        <a
+            class="primary-btn dashboard-add-btn"
+            href="{{ url_for('add') }}"
+        >
+            + Add Student
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         STATISTICS
+    ========================== -->
+
+    <div class="dashboard-stats">
+
+
+        <!-- Total Students -->
+
+        <div class="stat-card">
+
+            <span class="stat-icon">
+                👨‍🎓
+            </span>
+
+            <div>
+
+                <small>
+                    Total Students
+                </small>
+
+                <strong>
+                    {{ stats.total }}
+                </strong>
+
+                <p class="stat-description">
+                    Students registered
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Courses -->
+
+        <div class="stat-card">
+
+            <span class="stat-icon">
+                📚
+            </span>
+
+            <div>
+
+                <small>
+                    Total Courses
+                </small>
+
+                <strong>
+                    {{ stats.courses }}
+                </strong>
+
+                <p class="stat-description">
+                    Active courses
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Added Today -->
+
+        <div class="stat-card">
+
+            <span class="stat-icon">
+                🆕
+            </span>
+
+            <div>
+
+                <small>
+                    Added Today
+                </small>
+
+                <strong>
+                    {{ stats.today }}
+                </strong>
+
+                <p class="stat-description">
+                    New students today
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         RECENT STUDENTS
+    ========================== -->
+
+    <div class="recent-students-card">
+
+        <div class="recent-header">
+
+            <div>
+
+                <p class="section-label">
+                    STUDENT RECORDS
+                </p>
+
+                <h2>
+                    Recent Students
+                </h2>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('students_page') }}"
+                class="view-all-link"
+            >
+                View all →
+            </a>
+
+        </div>
+
+
+        <!-- Students Table -->
+
+        <div class="dashboard-table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Roll No
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Course
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for student in students[:5] %}
+
+                    <tr>
+
+                        <td>
+                            {{ student.id }}
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                {{ student.rollno }}
+                            </strong>
+
+                        </td>
+
+                        <td>
+                            {{ student.name }}
+                        </td>
+
+                        <td>
+                            {{ student.email }}
+                        </td>
+
+                        <td>
+
+                            <span class="badge">
+                                {{ student.course }}
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="empty"
+                        >
+                            No students found.
+                            Add your first student.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,343 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        Student Management
+        {% endblock %}
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+     SIDEBAR
+========================================== -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            S
+        </div>
+
+        <div>
+
+            <h2>
+                Student
+            </h2>
+
+            <span>
+                Management
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+
+        <!-- ======================================
+             ADMIN NAVIGATION
+        ======================================= -->
+
+        {% if session.get("role") == "admin" %}
+
+            <a
+                href="{{ url_for('home') }}"
+                class="nav-link"
+            >
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+
+            <a
+                href="{{ url_for('students_page') }}"
+                class="nav-link"
+            >
+                <span>👨‍🎓</span>
+                Students
+            </a>
+
+
+            <a
+                href="{{ url_for('add') }}"
+                class="nav-link"
+            >
+                <span>＋</span>
+                Add Student
+            </a>
+
+
+        <!-- ======================================
+             TEACHER NAVIGATION
+        ======================================= -->
+
+        {% elif session.get("role") == "teacher" %}
+
+            <a
+                href="{{ url_for('teacher_dashboard') }}"
+                class="nav-link"
+            >
+                <span>⌂</span>
+                Dashboard
+            </a>
+
+
+            <a
+                href="{{ url_for('students_page') }}"
+                class="nav-link"
+            >
+                <span>👨‍🎓</span>
+                Students
+            </a>
+
+
+        <!-- ======================================
+             STUDENT NAVIGATION
+        ======================================= -->
+
+        {% elif session.get("role") == "student" %}
+
+            <a
+                href="{{ url_for('student_dashboard') }}"
+                class="nav-link"
+            >
+                <span>⌂</span>
+                My Dashboard
+            </a>
+
+
+            <a
+                href="{{ url_for(
+                    'student_dashboard'
+                ) }}"
+                class="nav-link"
+            >
+                <span>📊</span>
+                My Attendance
+            </a>
+
+
+            <a
+                href="{{ url_for(
+                    'student_dashboard'
+                ) }}"
+                class="nav-link"
+            >
+                <span>📚</span>
+                My Results
+            </a>
+
+        {% endif %}
+
+
+    </nav>
+
+
+    <!-- ==========================================
+         USER / LOGOUT
+    =========================================== -->
+
+    <div class="sidebar-bottom">
+
+
+        <div class="sidebar-info">
+
+            <span class="status-dot"></span>
+
+            <div>
+
+                <strong>
+                    {{ session.get("username", "User") }}
+                </strong>
+
+                <small>
+
+                    {% if session.get("role") == "admin" %}
+                        Administrator
+
+                    {% elif session.get("role") == "teacher" %}
+                        Teacher
+
+                    {% elif session.get("role") == "student" %}
+                        Student
+
+                    {% else %}
+                        User
+                    {% endif %}
+
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="nav-link"
+            style="margin-top: 15px;"
+        >
+            <span>↪</span>
+            Logout
+        </a>
+
+
+    </div>
+
+</aside>
+
+
+<!-- ==========================================
+     MAIN AREA
+========================================== -->
+
+<main class="main-content">
+
+
+    <!-- ======================================
+         TOP BAR
+    ======================================= -->
+
+    <header class="topbar">
+
+        <div>
+
+            <p class="topbar-label">
+                STUDENT MANAGEMENT SYSTEM
+            </p>
+
+            <h3>
+
+                {% if session.get("role") == "admin" %}
+
+                    Admin Dashboard
+
+                {% elif session.get("role") == "teacher" %}
+
+                    Teacher Dashboard
+
+                {% elif session.get("role") == "student" %}
+
+                    Student Dashboard
+
+                {% else %}
+
+                    Welcome back 👋
+
+                {% endif %}
+
+            </h3>
+
+        </div>
+
+
+        <!-- Add Student only for Admin -->
+
+        {% if session.get("role") == "admin" %}
+
+            <a
+                href="{{ url_for('add') }}"
+                class="topbar-add"
+            >
+                + Add Student
+            </a>
+
+        {% endif %}
+
+
+    </header>
+
+
+    <!-- ======================================
+         FLASH MESSAGES
+    ======================================= -->
+
+    {% with messages = get_flashed_messages(
+        with_categories=true
+    ) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div
+                        class="flash-message {{ category }}"
+                    >
+
+                        <span>
+
+                            {% if category == "success" %}
+                                ✓
+                            {% else %}
+                                !
+                            {% endif %}
+
+                        </span>
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <!-- ======================================
+         PAGE CONTENT
+    ======================================= -->
+
+    <section class="page-content">
+
+        {% block content %}
+        {% endblock %}
+
+    </section>
+
+
+</main>
+
+
+<script
+    src="{{ url_for(
+        'static',
+        filename='js/script.js'
+    ) }}"
+></script>
+
+
+</body>
+
+</html>
+```

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Student | Student Management
+{% endblock %}
+
+{% block content %}
+
+<div class="edit-page">
+
+    <!-- Header -->
+    <div class="edit-header">
+
+        <div>
+            <p class="eyebrow">UPDATE RECORD</p>
+
+            <h1>Edit Student</h1>
+
+            <p class="edit-subtitle">
+                Update information for roll number
+                <strong>{{ student.rollno }}</strong>.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('students_page') }}"
+            class="back-btn"
+        >
+            ← Back to Students
+        </a>
+
+    </div>
+
+
+    <!-- Form Card -->
+    <div class="edit-form-card">
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'edit',
+                student_id=student.id
+            ) }}"
+        >
+
+            <!-- Roll Number -->
+            <div class="edit-form-group">
+
+                <label for="rollno">
+                    Roll Number
+                </label>
+
+                <input
+                    type="text"
+                    id="rollno"
+                    value="{{ student.rollno }}"
+                    readonly
+                    class="readonly-input"
+                >
+
+                <small>
+                    Roll number cannot be changed.
+                </small>
+
+            </div>
+
+
+            <!-- Full Name -->
+            <div class="edit-form-group">
+
+                <label for="name">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ student.name }}"
+                    placeholder="Enter full name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Email -->
+            <div class="edit-form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ student.email }}"
+                    placeholder="Enter email address"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Course -->
+            <div class="edit-form-group">
+
+                <label for="course">
+                    Course
+                </label>
+
+                <input
+                    type="text"
+                    id="course"
+                    name="course"
+                    value="{{ student.course }}"
+                    placeholder="Enter course"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Buttons -->
+            <div class="edit-form-actions">
+
+                <a
+                    href="{{ url_for('students_page') }}"
+                    class="cancel-btn"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="save-btn"
+                >
+                    ✓ Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

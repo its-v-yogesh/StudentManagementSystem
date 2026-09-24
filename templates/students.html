@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}
+Students | Student Management
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <p class="eyebrow">
+            STUDENT RECORDS
+        </p>
+
+        <h1>
+            All Students
+        </h1>
+
+        <p>
+            Manage all registered students, attendance and results.
+        </p>
+
+    </div>
+
+
+    <a
+        class="primary-btn"
+        href="{{ url_for('add') }}"
+    >
+        + Add Student
+    </a>
+
+</div>
+
+
+<!-- ==============================
+     SEARCH
+============================== -->
+
+<form
+    method="GET"
+    action="{{ url_for('students_page') }}"
+    class="search-form"
+>
+
+    <input
+        type="text"
+        name="q"
+        value="{{ query }}"
+        placeholder="🔍 Search name, roll no, email or course..."
+    >
+
+
+    <button type="submit">
+        Search
+    </button>
+
+
+    {% if query %}
+
+        <a
+            class="secondary-btn"
+            href="{{ url_for('students_page') }}"
+        >
+            Clear
+        </a>
+
+    {% endif %}
+
+</form>
+
+
+<!-- ==============================
+     STUDENTS TABLE
+============================== -->
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Photo
+                </th>
+
+                <th>
+                    Roll No
+                </th>
+
+                <th>
+                    Name
+                </th>
+
+                <th>
+                    Email
+                </th>
+
+                <th>
+                    Course
+                </th>
+
+                <th>
+                    Attendance
+                </th>
+
+                <th>
+                    Actions
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for student in students %}
+
+            <tr>
+
+                <!-- ==================
+                     PHOTO
+                =================== -->
+
+                <td>
+
+                    {% if student["photo"] %}
+
+                        <img
+                            src="{{
+                                url_for(
+                                    'static',
+                                    filename='uploads/' + student['photo']
+                                )
+                            }}"
+                            alt="{{ student['name'] }}"
+                            class="student-table-photo"
+                        >
+
+                    {% else %}
+
+                        <div class="student-table-placeholder">
+
+                            {{ student["name"][0]|upper }}
+
+                        </div>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- ==================
+                     ROLL NUMBER
+                =================== -->
+
+                <td>
+
+                    <strong>
+                        {{ student["rollno"] }}
+                    </strong>
+
+                </td>
+
+
+                <!-- ==================
+                     NAME
+                =================== -->
+
+                <td>
+
+                    <a
+                        class="student-name-link"
+                        href="{{
+                            url_for(
+                                'student_details',
+                                student_id=student['id']
+                            )
+                        }}"
+                    >
+
+                        {{ student["name"] }}
+
+                    </a>
+
+                </td>
+
+
+                <!-- ==================
+                     EMAIL
+                =================== -->
+
+                <td>
+
+                    {{ student["email"] }}
+
+                </td>
+
+
+                <!-- ==================
+                     COURSE
+                =================== -->
+
+                <td>
+
+                    <span class="badge">
+                        {{ student["course"] }}
+                    </span>
+
+                </td>
+
+
+                <!-- ==================
+                     ATTENDANCE
+                =================== -->
+
+                <td>
+
+                    {% if student["attendance_percentage"] >= 75 %}
+
+                        <span class="attendance-good">
+
+                            {{ student["attendance_percentage"] }}%
+
+                        </span>
+
+                    {% elif student["attendance_percentage"] >= 50 %}
+
+                        <span class="attendance-warning">
+
+                            {{ student["attendance_percentage"] }}%
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="attendance-danger">
+
+                            {{ student["attendance_percentage"] }}%
+
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <!-- ==================
+                     ACTIONS
+                =================== -->
+
+                <td class="actions">
+
+
+                    <!-- View -->
+
+                    <a
+                        class="view-btn"
+                        href="{{
+                            url_for(
+                                'student_details',
+                                student_id=student['id']
+                            )
+                        }}"
+                    >
+
+                        👁 View
+
+                    </a>
+
+
+                    <!-- Edit -->
+
+                    <a
+                        class="edit-btn"
+                        href="{{
+                            url_for(
+                                'edit',
+                                student_id=student['id']
+                            )
+                        }}"
+                    >
+
+                        ✏ Edit
+
+                    </a>
+
+
+                    <!-- Delete -->
+
+                    <form
+                        class="inline-form"
+                        method="POST"
+                        action="{{
+                            url_for(
+                                'delete',
+                                student_id=student['id']
+                            )
+                        }}"
+                        onsubmit="return confirmDelete()"
+                    >
+
+                        <button
+                            class="delete-btn"
+                            type="submit"
+                        >
+
+                            🗑 Delete
+
+                        </button>
+
+                    </form>
+
+
+                </td>
+
+            </tr>
+
+
+            {% else %}
+
+
+            <!-- ==================
+                 NO STUDENTS
+            =================== -->
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="empty"
+                >
+
+                    {% if query %}
+
+                        No students found for
+                        "{{ query }}".
+
+                    {% else %}
+
+                        No students available.
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Student | Student Management
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <p class="eyebrow">STUDENT RECORDS</p>
+
+        <h1>Add New Student</h1>
+
+        <p>
+            Enter student information and upload a profile picture.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('students_page') }}"
+        class="secondary-btn"
+    >
+        ← Back to Students
+    </a>
+
+</div>
+
+
+<div class="form-card">
+
+    <form
+        method="POST"
+        action="{{ url_for('add') }}"
+        enctype="multipart/form-data"
+    >
+
+        <!-- =========================
+             STUDENT PHOTO
+        ========================== -->
+
+        <div class="photo-upload-section">
+
+            <div
+                id="photoPreview"
+                class="photo-preview"
+            >
+                <span>👤</span>
+            </div>
+
+            <div class="photo-upload-content">
+
+                <label for="photo">
+                    Student Picture
+                </label>
+
+                <p>
+                    Upload JPG, JPEG, PNG or WEBP
+                    (recommended square image).
+                </p>
+
+                <input
+                    type="file"
+                    id="photo"
+                    name="photo"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    onchange="previewStudentPhoto(this)"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             BASIC INFORMATION
+        ========================== -->
+
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label for="rollno">
+                    Roll Number
+                </label>
+
+                <input
+                    type="text"
+                    id="rollno"
+                    name="rollno"
+                    placeholder="Enter roll number"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="name">
+                    Student Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter student name"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             CONTACT INFORMATION
+        ========================== -->
+
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email Address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="student@example.com"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="course">
+                    Course
+                </label>
+
+                <input
+                    type="text"
+                    id="course"
+                    name="course"
+                    placeholder="e.g. BCA"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             BUTTONS
+        ========================== -->
+
+        <div class="form-actions">
+
+            <a
+                href="{{ url_for('students_page') }}"
+                class="secondary-btn"
+            >
+                Cancel
+            </a>
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                + Add Student
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+
+{% block title %}
+Teacher Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="teacher-dashboard">
+
+    <!-- TEACHER HERO -->
+    <section class="teacher-hero">
+
+        <div>
+
+            <div class="eyebrow">
+                FACULTY CONTROL CENTER
+            </div>
+
+            <h1>
+                Teacher Dashboard
+            </h1>
+
+            <p>
+                Manage students, attendance and academic results from one place.
+            </p>
+
+        </div>
+
+        <div class="teacher-chip">
+            ● Teacher Access
+        </div>
+
+    </section>
+
+
+    <!-- STATISTICS -->
+    <section class="dashboard-stats">
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-title">
+                    Students
+                </span>
+
+                <div class="stat-icon">
+                    👨‍🎓
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                {{ stats.total_students|default(0) }}
+            </div>
+
+            <div class="stat-description">
+                Registered students
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-title">
+                    Courses
+                </span>
+
+                <div class="stat-icon">
+                    ◈
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                {{ stats.total_courses|default(0) }}
+            </div>
+
+            <div class="stat-description">
+                Active courses
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-title">
+                    Classes
+                </span>
+
+                <div class="stat-icon">
+                    ✓
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                {{ stats.today_classes|default(0) }}
+            </div>
+
+            <div class="stat-description">
+                Classes recorded
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+
+                <span class="stat-title">
+                    Attendance
+                </span>
+
+                <div class="stat-icon">
+                    ◉
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+                {{ stats.average_attendance|default(0) }}%
+            </div>
+
+            <div class="stat-description">
+                Average attendance
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MAIN GRID -->
+    <section class="teacher-grid">
+
+
+        <!-- RECENT STUDENTS -->
+        <div class="recent-students-card">
+
+            <div class="recent-header">
+
+                <div>
+
+                    <div class="section-label">
+                        Student Directory
+                    </div>
+
+                    <div class="section-subtitle">
+                        Recently available student records
+                    </div>
+
+                </div>
+
+                <a
+                    href="{{ url_for('students_page') }}"
+                    class="view-all-link"
+                >
+                    View all →
+                </a>
+
+            </div>
+
+
+            <div class="dashboard-table-wrapper">
+
+                {% if students %}
+
+                    <table class="teacher-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Student
+                                </th>
+
+                                <th>
+                                    Roll No
+                                </th>
+
+                                <th>
+                                    Course
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for student in students[:7] %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="student-mini">
+
+                                            {% if student.photo %}
+
+                                                <img
+                                                    src="{{ url_for('static', filename='uploads/' ~ student.photo) }}"
+                                                    class="student-mini-photo"
+                                                    alt="Student"
+                                                >
+
+                                            {% else %}
+
+                                                <div class="student-mini-placeholder">
+                                                    {{ student.name[0]|upper }}
+                                                </div>
+
+                                            {% endif %}
+
+
+                                            <div>
+
+                                                <strong>
+                                                    {{ student.name }}
+                                                </strong>
+
+                                                <small>
+                                                    {{ student.email }}
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        {{ student.rollno }}
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="course-badge">
+                                            {{ student.course }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="table-actions">
+
+                                            <a
+                                                href="{{ url_for('student_details', student_id=student.id) }}"
+                                                class="table-action view"
+                                            >
+                                                View
+                                            </a>
+
+                                            <a
+                                                href="{{ url_for('attendance', student_id=student.id) }}"
+                                                class="table-action attendance"
+                                            >
+                                                Attendance
+                                            </a>
+
+                                            <a
+                                                href="{{ url_for('result', student_id=student.id) }}"
+                                                class="table-action result"
+                                            >
+                                                Result
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <div class="empty-state-icon">
+                            👨‍🎓
+                        </div>
+
+                        <h3>
+                            No students found
+                        </h3>
+
+                        <p>
+                            Student records will appear here.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK ACTIONS -->
+        <div>
+
+            <div class="section-label" style="margin-bottom: 12px;">
+                Quick Actions
+            </div>
+
+            <div class="quick-actions">
+
+
+                <a
+                    href="{{ url_for('students_page') }}"
+                    class="quick-card"
+                >
+
+                    <div class="quick-icon">
+                        👨‍🎓
+                    </div>
+
+                    <h4>
+                        Students
+                    </h4>
+
+                    <p>
+                        Browse and search student records.
+                    </p>
+
+                </a>
+
+
+                {% if students %}
+
+                    <a
+                        href="{{ url_for('student_details', student_id=students[0].id) }}"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+                            👁
+                        </div>
+
+                        <h4>
+                            View Student
+                        </h4>
+
+                        <p>
+                            Open a student's complete profile.
+                        </p>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('attendance', student_id=students[0].id) }}"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+                            ✓
+                        </div>
+
+                        <h4>
+                            Attendance
+                        </h4>
+
+                        <p>
+                            Manage attendance records.
+                        </p>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('result', student_id=students[0].id) }}"
+                        class="quick-card"
+                    >
+
+                        <div class="quick-icon">
+                            ★
+                        </div>
+
+                        <h4>
+                            Results
+                        </h4>
+
+                        <p>
+                            Add or manage academic results.
+                        </p>
+
+                    </a>
+
+                {% else %}
+
+                    <div class="quick-card">
+
+                        <div class="quick-icon">
+                            +
+                        </div>
+
+                        <h4>
+                            No Student
+                        </h4>
+
+                        <p>
+                            Add a student first to manage records.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}
