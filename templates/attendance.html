@@ -6,164 +6,401 @@ Attendance - {{ student["name"] }}
 
 {% block content %}
 
-<div class="page-header">
+<div class="student-attendance-page">
 
-    <div>
-        <h1>Attendance</h1>
+    <!-- PAGE HEADER -->
+    <div class="student-attendance-header">
 
-        <p>
-            {{ student["name"] }}
-            — Roll No: {{ student["rollno"] }}
-        </p>
-    </div>
+        <div class="attendance-heading">
 
-    <a
-        href="{{ url_for('student_details', student_id=student['id']) }}"
-        class="btn btn-secondary"
-    >
-        ← Back
-    </a>
+            <div class="attendance-title-icon">
+                📊
+            </div>
 
-</div>
+            <div>
+                <p class="attendance-eyebrow">
+                    ATTENDANCE TRACKER
+                </p>
 
+                <h1>
+                    {% if student_view %}
+                        My Attendance
+                    {% else %}
+                        Attendance
+                    {% endif %}
+                </h1>
 
-<div class="dashboard-grid">
-
-    <!-- Current Attendance -->
-
-    <div class="card attendance-card">
-
-        <h3>Current Attendance</h3>
-
-        <div class="attendance-circle"
-             style="--attendance: {{ attendance['percentage'] }};">
-
-            <div class="attendance-circle-inner">
-
-                <strong>
-                    {{ attendance["percentage"] }}%
-                </strong>
-
-                <span>Attendance</span>
-
+                <p class="attendance-subtitle">
+                    {{ student["name"] }}
+                    <span>•</span>
+                    Roll No: {{ student["rollno"] }}
+                </p>
             </div>
 
         </div>
 
-    </div>
 
+        {% if student_view %}
 
-    <!-- Update Attendance -->
-
-    <div class="card form-card">
-
-        <h3>Update Attendance</h3>
-
-        <form
-            method="POST"
-            action="{{ url_for('attendance', student_id=student['id']) }}"
-        >
-
-            <div class="form-group">
-
-                <label for="total_classes">
-                    Total Classes
-                </label>
-
-                <input
-                    type="number"
-                    id="total_classes"
-                    name="total_classes"
-                    min="0"
-                    value="{{ attendance['total_classes'] }}"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="attended_classes">
-                    Classes Attended
-                </label>
-
-                <input
-                    type="number"
-                    id="attended_classes"
-                    name="attended_classes"
-                    min="0"
-                    value="{{ attendance['attended_classes'] }}"
-                    required
-                >
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="btn btn-primary"
+            <a
+                href="{{ url_for('student_dashboard') }}"
+                class="attendance-back-btn"
             >
-                Save Attendance
-            </button>
+                ← Dashboard
+            </a>
 
-        </form>
+        {% else %}
+
+            <a
+                href="{{ url_for('student_details', student_id=student['id']) }}"
+                class="attendance-back-btn"
+            >
+                ← Back
+            </a>
+
+        {% endif %}
 
     </div>
 
-</div>
+
+    <!-- MAIN ATTENDANCE AREA -->
+    <div class="attendance-main-grid">
 
 
-<div class="card">
+        <!-- ATTENDANCE OVERVIEW -->
+        <div class="attendance-overview-card">
 
-    <h3>Attendance Information</h3>
+            <div class="attendance-card-heading">
 
-    <div class="stats-list">
+                <div>
+                    <p class="attendance-card-label">
+                        OVERVIEW
+                    </p>
 
-        <div class="stats-row">
+                    <h2>
+                        Attendance Overview
+                    </h2>
+                </div>
 
-            <span>Total Classes</span>
+                <div class="attendance-small-icon">
+                    ✓
+                </div>
 
-            <strong>
-                {{ attendance["total_classes"] }}
-            </strong>
+            </div>
+
+
+            <div class="attendance-ring-wrapper">
+
+                <div
+                    class="attendance-circle"
+                    style="--attendance: {{ attendance['percentage'] }};"
+                >
+
+                    <div class="attendance-circle-inner">
+
+                        <strong>
+                            {{ attendance["percentage"] }}%
+                        </strong>
+
+                        <span>
+                            Attendance
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="attendance-overview-footer">
+
+                <span>
+                    Current Overall Attendance
+                </span>
+
+                {% if attendance["percentage"] >= 75 %}
+
+                    <span class="attendance-status-badge status-good">
+                        ● Good
+                    </span>
+
+                {% elif attendance["percentage"] >= 50 %}
+
+                    <span class="attendance-status-badge status-warning">
+                        ● Average
+                    </span>
+
+                {% else %}
+
+                    <span class="attendance-status-badge status-danger">
+                        ● Low
+                    </span>
+
+                {% endif %}
+
+            </div>
 
         </div>
 
 
-        <div class="stats-row">
+        {% if not student_view %}
 
-            <span>Present</span>
+            <!-- UPDATE ATTENDANCE -->
+            <div class="attendance-update-card">
 
-            <strong>
-                {{ attendance["attended_classes"] }}
-            </strong>
+                <div class="attendance-card-heading">
+
+                    <div>
+                        <p class="attendance-card-label">
+                            MANAGEMENT
+                        </p>
+
+                        <h2>
+                            Update Attendance
+                        </h2>
+                    </div>
+
+                    <div class="attendance-small-icon">
+                        ✎
+                    </div>
+
+                </div>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for('attendance', student_id=student['id']) }}"
+                    class="attendance-update-form"
+                >
+
+                    <div class="attendance-input-group">
+
+                        <label for="total_classes">
+                            Total Classes
+                        </label>
+
+                        <input
+                            type="number"
+                            id="total_classes"
+                            name="total_classes"
+                            min="0"
+                            value="{{ attendance['total_classes'] }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="attendance-input-group">
+
+                        <label for="attended_classes">
+                            Classes Attended
+                        </label>
+
+                        <input
+                            type="number"
+                            id="attended_classes"
+                            name="attended_classes"
+                            min="0"
+                            value="{{ attendance['attended_classes'] }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="attendance-save-btn"
+                    >
+                        Save Attendance
+                    </button>
+
+                </form>
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- STUDENT STATUS -->
+            <div class="attendance-status-card">
+
+                <div class="attendance-card-heading">
+
+                    <div>
+                        <p class="attendance-card-label">
+                            CURRENT STATUS
+                        </p>
+
+                        <h2>
+                            Attendance Status
+                        </h2>
+                    </div>
+
+                    <div class="attendance-small-icon">
+                        ✓
+                    </div>
+
+                </div>
+
+
+                <div class="attendance-status-number">
+                    {{ attendance["percentage"] }}%
+                </div>
+
+
+                <p class="attendance-status-description">
+                    Your current overall attendance percentage.
+                </p>
+
+
+                {% if attendance["percentage"] >= 75 %}
+
+                    <div class="attendance-message status-message-good">
+                        <span>✓</span>
+                        <div>
+                            <strong>Attendance is good</strong>
+                            <small>Keep maintaining your attendance.</small>
+                        </div>
+                    </div>
+
+                {% elif attendance["percentage"] >= 50 %}
+
+                    <div class="attendance-message status-message-warning">
+                        <span>!</span>
+                        <div>
+                            <strong>Attendance needs attention</strong>
+                            <small>Try to attend more classes regularly.</small>
+                        </div>
+                    </div>
+
+                {% else %}
+
+                    <div class="attendance-message status-message-danger">
+                        <span>!</span>
+                        <div>
+                            <strong>Low attendance</strong>
+                            <small>Regular attendance is recommended.</small>
+                        </div>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ATTENDANCE INFORMATION -->
+    <div class="attendance-information-card">
+
+        <div class="attendance-information-header">
+
+            <div>
+
+                <p class="attendance-card-label">
+                    ATTENDANCE DETAILS
+                </p>
+
+                <h2>
+                    Attendance Information
+                </h2>
+
+                <p>
+                    Detailed summary of your class attendance.
+                </p>
+
+            </div>
+
+            <div class="attendance-info-icon">
+                📋
+            </div>
 
         </div>
 
 
-        <div class="stats-row">
-
-            <span>Absent</span>
-
-            <strong>
-                {{
-                    attendance["total_classes"]
-                    -
-                    attendance["attended_classes"]
-                }}
-            </strong>
-
-        </div>
+        <div class="attendance-info-grid">
 
 
-        <div class="stats-row">
+            <!-- TOTAL -->
+            <div class="attendance-info-item">
 
-            <span>Percentage</span>
+                <div class="attendance-info-item-icon total-icon">
+                    📚
+                </div>
 
-            <strong>
-                {{ attendance["percentage"] }}%
-            </strong>
+                <div>
+                    <span>Total Classes</span>
+
+                    <strong>
+                        {{ attendance["total_classes"] }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- PRESENT -->
+            <div class="attendance-info-item">
+
+                <div class="attendance-info-item-icon present-icon">
+                    ✓
+                </div>
+
+                <div>
+                    <span>Present</span>
+
+                    <strong>
+                        {{ attendance["attended_classes"] }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- ABSENT -->
+            <div class="attendance-info-item">
+
+                <div class="attendance-info-item-icon absent-icon">
+                    ×
+                </div>
+
+                <div>
+                    <span>Absent</span>
+
+                    <strong>
+                        {{
+                            attendance["total_classes"]
+                            -
+                            attendance["attended_classes"]
+                        }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- PERCENTAGE -->
+            <div class="attendance-info-item">
+
+                <div class="attendance-info-item-icon percentage-icon">
+                    %
+                </div>
+
+                <div>
+                    <span>Percentage</span>
+
+                    <strong>
+                        {{ attendance["percentage"] }}%
+                    </strong>
+                </div>
+
+            </div>
 
         </div>
 

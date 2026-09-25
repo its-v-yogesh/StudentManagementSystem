@@ -1,3 +1,4 @@
+```html
 {% extends "base.html" %}
 
 {% block title %}
@@ -6,316 +7,626 @@ Result - {{ student["name"] }}
 
 {% block content %}
 
-<div class="page-header">
+<div class="student-result-page">
 
-    <div>
+    <!-- ==================== HEADER ==================== -->
 
-        <h1>Student Result</h1>
+    <div class="student-result-header">
 
-        <p>
-            {{ student["name"] }}
-            — Roll No: {{ student["rollno"] }}
-        </p>
+        <div class="result-heading">
 
-    </div>
-
-
-    <a
-        href="{{ url_for('student_details', student_id=student['id']) }}"
-        class="btn btn-secondary"
-    >
-        ← Back
-    </a>
-
-</div>
-
-
-<!-- ==============================
-     RESULT SUMMARY
-============================== -->
-
-<div class="dashboard-grid">
-
-    <div class="card">
-
-        <h3>Total Marks</h3>
-
-        <div class="big-number">
-
-            {{ result_summary["total_marks"] }}
-
-            <small>
-                /
-                {{ result_summary["max_marks"] }}
-            </small>
-
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <h3>Percentage</h3>
-
-        <div class="big-number">
-
-            {{ result_summary["percentage"] }}%
-
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <h3>Overall Grade</h3>
-
-        <div class="big-number">
-
-            {{ result_summary["grade"] }}
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ==============================
-     ADD RESULT
-============================== -->
-
-<div class="card form-card">
-
-    <h2>Add Subject Result</h2>
-
-    <form
-        method="POST"
-        action="{{ url_for('result', student_id=student['id']) }}"
-    >
-
-        <div class="form-row">
-
-            <div class="form-group">
-
-                <label for="subject">
-                    Subject
-                </label>
-
-                <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    placeholder="e.g. Mathematics"
-                    required
-                >
-
+            <div class="result-title-icon">
+                🎓
             </div>
 
+            <div>
 
-            <div class="form-group">
+                <p class="result-eyebrow">
+                    ACADEMIC PERFORMANCE
+                </p>
 
-                <label for="marks">
-                    Obtained Marks
-                </label>
+                <h1>
+                    {% if student_view %}
+                        My Results
+                    {% else %}
+                        Student Result
+                    {% endif %}
+                </h1>
 
-                <input
-                    type="number"
-                    id="marks"
-                    name="marks"
-                    min="0"
-                    step="0.01"
-                    placeholder="e.g. 85"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="max_marks">
-                    Maximum Marks
-                </label>
-
-                <input
-                    type="number"
-                    id="max_marks"
-                    name="max_marks"
-                    min="1"
-                    step="0.01"
-                    value="100"
-                    required
-                >
+                <p class="result-subtitle">
+                    {{ student["name"] }}
+                    <span>•</span>
+                    Roll No: {{ student["rollno"] }}
+                </p>
 
             </div>
 
         </div>
 
 
-        <button
-            type="submit"
-            class="btn btn-primary"
-        >
-            Add Result
-        </button>
+        {% if student_view %}
 
-    </form>
+            <a
+                href="{{ url_for('student_dashboard') }}"
+                class="result-back-btn"
+            >
+                ← Dashboard
+            </a>
 
-</div>
+        {% else %}
 
+            <a
+                href="{{ url_for('student_details', student_id=student['id']) }}"
+                class="result-back-btn"
+            >
+                ← Back
+            </a>
 
-<!-- ==============================
-     RESULT TABLE
-============================== -->
+        {% endif %}
 
-<div class="card">
-
-    <h2>Subject Results</h2>
-
-    {% if results %}
-
-        <div class="table-container">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Subject</th>
-
-                        <th>Marks</th>
-
-                        <th>Maximum</th>
-
-                        <th>Percentage</th>
-
-                        <th>Grade</th>
-
-                        <th>Action</th>
-
-                    </tr>
-
-                </thead>
+    </div>
 
 
-                <tbody>
+    <!-- ==================== SUMMARY ==================== -->
 
-                    {% for item in results %}
-
-                    {% set percentage =
-                        (
-                            item["marks"]
-                            /
-                            item["max_marks"]
-                        ) * 100
-                    %}
+    <div class="result-summary-grid">
 
 
-                    <tr>
+        <!-- TOTAL MARKS -->
 
-                        <td>
-                            <strong>
-                                {{ item["subject"] }}
-                            </strong>
-                        </td>
+        <div class="result-summary-card marks-summary">
 
+            <div class="result-summary-top">
 
-                        <td>
-                            {{ item["marks"] }}
-                        </td>
+                <div>
 
+                    <p>
+                        ACADEMIC SCORE
+                    </p>
 
-                        <td>
-                            {{ item["max_marks"] }}
-                        </td>
+                    <h3>
+                        Total Marks
+                    </h3>
 
+                </div>
 
-                        <td>
-                            {{ "%.2f"|format(percentage) }}%
-                        </td>
+                <div class="result-summary-icon">
+                    📚
+                </div>
 
-
-                        <td>
-
-                            {% if percentage >= 90 %}
-                                A+
-
-                            {% elif percentage >= 80 %}
-                                A
-
-                            {% elif percentage >= 70 %}
-                                B+
-
-                            {% elif percentage >= 60 %}
-                                B
-
-                            {% elif percentage >= 50 %}
-                                C
-
-                            {% elif percentage >= 40 %}
-                                D
-
-                            {% else %}
-                                F
-
-                            {% endif %}
-
-                        </td>
+            </div>
 
 
-                        <td>
+            <div class="result-big-number">
 
-                            <form
-                                method="POST"
-                                action="{{
-                                    url_for(
-                                        'result_delete',
-                                        result_id=item['id']
-                                    )
-                                }}"
-                                onsubmit="return confirm(
-                                    'Delete this result?'
-                                );"
-                            >
+                {{ result_summary["total_marks"] }}
 
-                                <button
-                                    type="submit"
-                                    class="btn btn-danger btn-small"
-                                >
-                                    Delete
-                                </button>
+                <small>
+                    / {{ result_summary["max_marks"] }}
+                </small>
 
-                            </form>
+            </div>
 
-                        </td>
 
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
+            <div class="result-card-footer">
+                Total marks obtained
+            </div>
 
         </div>
 
-    {% else %}
 
-        <div class="empty-state">
+        <!-- PERCENTAGE -->
 
-            <h3>No Results</h3>
+        <div class="result-summary-card percentage-summary">
 
-            <p>
-                Add the student's subject-wise marks above.
-            </p>
+            <div class="result-summary-top">
+
+                <div>
+
+                    <p>
+                        PERFORMANCE
+                    </p>
+
+                    <h3>
+                        Percentage
+                    </h3>
+
+                </div>
+
+                <div class="result-summary-icon">
+                    %
+                </div>
+
+            </div>
+
+
+            <div class="result-big-number">
+                {{ result_summary["percentage"] }}%
+            </div>
+
+
+            <div class="result-mini-progress">
+
+                <div class="result-summary-progress-fill"></div>
+
+            </div>
+
+
+            <div class="result-card-footer">
+                Overall academic percentage
+            </div>
+
+        </div>
+
+
+        <!-- OVERALL GRADE -->
+
+        <div class="result-summary-card grade-summary">
+
+            <div class="result-summary-top">
+
+                <div>
+
+                    <p>
+                        FINAL EVALUATION
+                    </p>
+
+                    <h3>
+                        Overall Grade
+                    </h3>
+
+                </div>
+
+                <div class="result-summary-icon">
+                    🏆
+                </div>
+
+            </div>
+
+
+            <div class="result-grade-number">
+                {{ result_summary["grade"] }}
+            </div>
+
+
+            <div class="result-card-footer">
+                Overall performance grade
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================== ADD RESULT ==================== -->
+
+    {% if not student_view %}
+
+        <div class="result-add-card">
+
+            <div class="result-section-header">
+
+                <div>
+
+                    <p class="result-section-label">
+                        RESULT MANAGEMENT
+                    </p>
+
+                    <h2>
+                        Add Subject Result
+                    </h2>
+
+                    <span>
+                        Add marks for an individual subject.
+                    </span>
+
+                </div>
+
+                <div class="result-section-icon">
+                    +
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="{{ url_for('result', student_id=student['id']) }}"
+                class="result-add-form"
+            >
+
+
+                <!-- SUBJECT -->
+
+                <div class="result-input-group">
+
+                    <label for="subject">
+                        Subject
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        placeholder="e.g. Mathematics"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- OBTAINED MARKS -->
+
+                <div class="result-input-group">
+
+                    <label for="marks">
+                        Obtained Marks
+                    </label>
+
+                    <input
+                        type="number"
+                        id="marks"
+                        name="marks"
+                        min="0"
+                        step="0.01"
+                        placeholder="e.g. 85"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- MAXIMUM MARKS -->
+
+                <div class="result-input-group">
+
+                    <label for="max_marks">
+                        Maximum Marks
+                    </label>
+
+                    <input
+                        type="number"
+                        id="max_marks"
+                        name="max_marks"
+                        min="1"
+                        step="0.01"
+                        value="100"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ADD BUTTON -->
+
+                <button
+                    type="submit"
+                    class="result-add-btn"
+                >
+                    + Add Result
+                </button>
+
+            </form>
 
         </div>
 
     {% endif %}
 
+
+    <!-- ==================== STUDENT RESULT ==================== -->
+
+    <div class="result-subject-card">
+
+        <div class="result-section-header">
+
+            <div>
+
+                <p class="result-section-label">
+                    SUBJECT PERFORMANCE
+                </p>
+
+                <h2>
+                    Student Result
+                </h2>
+
+                <span>
+                    Subject-wise academic performance.
+                </span>
+
+            </div>
+
+            <div class="result-section-icon">
+                📋
+            </div>
+
+        </div>
+
+
+        {% if results %}
+
+            <div class="result-table-wrapper">
+
+                <table class="premium-result-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Subject
+                            </th>
+
+                            <th>
+                                Marks
+                            </th>
+
+                            <th>
+                                Maximum
+                            </th>
+
+                            <th>
+                                Percentage
+                            </th>
+
+                            <th>
+                                Grade
+                            </th>
+
+                            {% if not student_view %}
+
+                                <th>
+                                    Action
+                                </th>
+
+                            {% endif %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for item in results %}
+
+
+                            <!-- CALCULATE PERCENTAGE -->
+
+                            {% if item["max_marks"] and item["max_marks"] > 0 %}
+
+                                {% set percentage =
+                                    (item["marks"] / item["max_marks"]) * 100
+                                %}
+
+                            {% else %}
+
+                                {% set percentage = 0 %}
+
+                            {% endif %}
+
+
+                            <tr>
+
+
+                                <!-- SUBJECT -->
+
+                                <td>
+
+                                    <div class="result-subject-name">
+
+                                        <div class="result-subject-icon">
+                                            📖
+                                        </div>
+
+                                        <strong>
+                                            {{ item["subject"] }}
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- MARKS -->
+
+                                <td>
+
+                                    <strong class="result-marks">
+                                        {{ item["marks"] }}
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- MAXIMUM -->
+
+                                <td>
+
+                                    <span class="result-max-marks">
+                                        {{ item["max_marks"] }}
+                                    </span>
+
+                                </td>
+
+
+                                <!-- PERCENTAGE -->
+
+                                <td>
+
+                                    <div class="result-percentage-cell">
+
+                                        <div class="result-percentage-top">
+
+                                            <strong>
+                                                {{ "%.2f"|format(percentage) }}%
+                                            </strong>
+
+                                        </div>
+
+
+                                        <div class="result-progress">
+
+
+                                            {% if percentage >= 75 %}
+
+                                                <div class="result-progress-fill result-progress-good"></div>
+
+
+                                            {% elif percentage >= 50 %}
+
+                                                <div class="result-progress-fill result-progress-average"></div>
+
+
+                                            {% else %}
+
+                                                <div class="result-progress-fill result-progress-low"></div>
+
+                                            {% endif %}
+
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- GRADE -->
+
+                                <td>
+
+
+                                    {% if percentage >= 90 %}
+
+                                        <span class="result-grade grade-aplus">
+                                            A+
+                                        </span>
+
+
+                                    {% elif percentage >= 80 %}
+
+                                        <span class="result-grade grade-a">
+                                            A
+                                        </span>
+
+
+                                    {% elif percentage >= 70 %}
+
+                                        <span class="result-grade grade-bplus">
+                                            B+
+                                        </span>
+
+
+                                    {% elif percentage >= 60 %}
+
+                                        <span class="result-grade grade-b">
+                                            B
+                                        </span>
+
+
+                                    {% elif percentage >= 50 %}
+
+                                        <span class="result-grade grade-c">
+                                            C
+                                        </span>
+
+
+                                    {% elif percentage >= 40 %}
+
+                                        <span class="result-grade grade-d">
+                                            D
+                                        </span>
+
+
+                                    {% else %}
+
+                                        <span class="result-grade grade-f">
+                                            F
+                                        </span>
+
+                                    {% endif %}
+
+
+                                </td>
+
+
+                                <!-- DELETE -->
+
+                                {% if not student_view %}
+
+                                    <td>
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for('result_delete', result_id=item['id']) }}"
+                                            onsubmit="return confirm('Delete this result?');"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="result-delete-btn"
+                                            >
+                                                🗑 Delete
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                {% endif %}
+
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- NO RESULTS -->
+
+            <div class="result-empty-state">
+
+                <div class="result-empty-icon">
+                    📚
+                </div>
+
+                <h3>
+                    No Results Yet
+                </h3>
+
+                <p>
+
+                    {% if student_view %}
+
+                        Your results have not been added yet.
+
+                    {% else %}
+
+                        Add the student's subject-wise marks above.
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
 </div>
 
 {% endblock %}
+```

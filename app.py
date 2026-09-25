@@ -12,9 +12,7 @@ from functools import wraps
 from pathlib import Path
 
 from werkzeug.utils import secure_filename
-from werkzeug.security import (
-    check_password_hash
-)
+from werkzeug.security import check_password_hash
 
 from models.database import (
     init_db,
@@ -61,9 +59,7 @@ UPLOAD_FOLDER.mkdir(
     exist_ok=True
 )
 
-app.config["UPLOAD_FOLDER"] = str(
-    UPLOAD_FOLDER
-)
+app.config["UPLOAD_FOLDER"] = str(UPLOAD_FOLDER)
 
 
 ALLOWED_EXTENSIONS = {
@@ -81,7 +77,6 @@ ALLOWED_EXTENSIONS = {
 init_db()
 
 
-# ============================================================
 # ============================================================
 # ROLE DECORATORS
 # ============================================================
@@ -133,6 +128,7 @@ def teacher_required(function):
     return roles_required("admin", "teacher")(function)
 
 
+# ============================================================
 # LOGIN
 # ============================================================
 
@@ -242,6 +238,7 @@ def role_dashboard():
     return redirect(url_for("login"))
 
 
+# ============================================================
 # LOGOUT
 # ============================================================
 
@@ -278,7 +275,7 @@ def allowed_file(filename):
 
 
 # ============================================================
-# DASHBOARD
+# ADMIN DASHBOARD
 # ============================================================
 
 @app.route("/")
@@ -297,7 +294,6 @@ def home():
 
 
 # ============================================================
-# ============================================================
 # TEACHER DASHBOARD
 # ============================================================
 
@@ -306,6 +302,7 @@ def home():
 def teacher_dashboard():
 
     students = get_students()
+
     stats = get_dashboard_stats()
 
     return render_template(
@@ -334,9 +331,13 @@ def student_dashboard():
             "error"
         )
 
-        return redirect(url_for("login"))
+        return redirect(
+            url_for("login")
+        )
 
-    student = get_student(student_id)
+    student = get_student(
+        student_id
+    )
 
     if student is None:
 
@@ -347,26 +348,160 @@ def student_dashboard():
             "error"
         )
 
-        return redirect(url_for("login"))
+        return redirect(
+            url_for("login")
+        )
 
-    attendance_data = get_attendance(student_id)
+    attendance_data = get_attendance(
+        student_id
+    )
 
-    results = get_results(student_id)
+    results = get_results(
+        student_id
+    )
 
-    result_summary = get_result_summary(student_id)
+    result_summary = get_result_summary(
+        student_id
+    )
 
     return render_template(
         "student_dashboard.html",
+
         student=student,
+
         attendance=attendance_data,
+
         results=results,
+
         result_summary=result_summary
     )
 
 
 # ============================================================
+# STUDENT - MY ATTENDANCE
+# READ ONLY
+# ============================================================
+
+@app.route("/my-attendance")
+@roles_required("student")
+def my_attendance():
+
+    student_id = session.get(
+        "student_id"
+    )
+
+    if not student_id:
+
+        session.clear()
+
+        flash(
+            "Student account is not properly linked.",
+            "error"
+        )
+
+        return redirect(
+            url_for("login")
+        )
+
+    student = get_student(
+        student_id
+    )
+
+    if student is None:
+
+        session.clear()
+
+        flash(
+            "Student record not found.",
+            "error"
+        )
+
+        return redirect(
+            url_for("login")
+        )
+
+    attendance_data = get_attendance(
+        student_id
+    )
+
+    return render_template(
+        "attendance.html",
+
+        student=student,
+
+        attendance=attendance_data,
+
+        student_view=True
+    )
+
+
+# ============================================================
+# STUDENT - MY RESULTS
+# READ ONLY
+# ============================================================
+
+@app.route("/my-results")
+@roles_required("student")
+def my_results():
+
+    student_id = session.get(
+        "student_id"
+    )
+
+    if not student_id:
+
+        session.clear()
+
+        flash(
+            "Student account is not properly linked.",
+            "error"
+        )
+
+        return redirect(
+            url_for("login")
+        )
+
+    student = get_student(
+        student_id
+    )
+
+    if student is None:
+
+        session.clear()
+
+        flash(
+            "Student record not found.",
+            "error"
+        )
+
+        return redirect(
+            url_for("login")
+        )
+
+    results = get_results(
+        student_id
+    )
+
+    result_summary = get_result_summary(
+        student_id
+    )
+
+    return render_template(
+        "result.html",
+
+        student=student,
+
+        results=results,
+
+        result_summary=result_summary,
+
+        student_view=True
+    )
+
+
+# ============================================================
 # STUDENTS LIST + SEARCH
-# Admin + Teacher
+# ADMIN + TEACHER
 # ============================================================
 
 @app.route("/students")
@@ -426,7 +561,6 @@ def add():
             "photo"
         )
 
-
         # ----------------------------------------------------
         # VALIDATION
         # ----------------------------------------------------
@@ -446,7 +580,6 @@ def add():
             return render_template(
                 "add_student.html"
             )
-
 
         # ----------------------------------------------------
         # SAVE PHOTO
@@ -469,7 +602,6 @@ def add():
                     "add_student.html"
                 )
 
-
             original_name = secure_filename(
                 photo.filename
             )
@@ -483,17 +615,14 @@ def add():
                 .lower()
             )
 
-
             photo_filename = (
                 f"student_{rollno}.{extension}"
             )
-
 
             photo.save(
                 UPLOAD_FOLDER
                 / photo_filename
             )
-
 
         # ----------------------------------------------------
         # ADD STUDENT
@@ -520,7 +649,6 @@ def add():
                 )
             )
 
-
         except ValueError as exc:
 
             if photo_filename:
@@ -531,15 +659,12 @@ def add():
                 )
 
                 if photo_path.exists():
-
                     photo_path.unlink()
-
 
             flash(
                 str(exc),
                 "error"
             )
-
 
     return render_template(
         "add_student.html"
@@ -548,6 +673,7 @@ def add():
 
 # ============================================================
 # STUDENT DETAILS
+# ADMIN + TEACHER
 # ============================================================
 
 @app.route(
@@ -559,7 +685,6 @@ def student_details(student_id):
     student = get_student(
         student_id
     )
-
 
     if student is None:
 
@@ -574,35 +699,30 @@ def student_details(student_id):
             )
         )
 
-
     # --------------------------------------------------------
     # ATTENDANCE
     # --------------------------------------------------------
 
-    attendance = get_attendance(
+    attendance_data = get_attendance(
         student_id
     )
 
-
     total_classes = (
-        attendance["total_classes"]
+        attendance_data["total_classes"]
     )
 
     present_classes = (
-        attendance["attended_classes"]
+        attendance_data["attended_classes"]
     )
-
 
     absent_classes = (
         total_classes
         - present_classes
     )
 
-
     attendance_percentage = (
-        attendance["percentage"]
+        attendance_data["percentage"]
     )
-
 
     if total_classes > 0:
 
@@ -627,9 +747,7 @@ def student_details(student_id):
     else:
 
         present_percentage = 0
-
         absent_percentage = 0
-
 
     # --------------------------------------------------------
     # RESULTS
@@ -639,18 +757,16 @@ def student_details(student_id):
         student_id
     )
 
-
     result_summary = get_result_summary(
         student_id
     )
-
 
     return render_template(
         "student_details.html",
 
         student=student,
 
-        attendance=attendance,
+        attendance=attendance_data,
 
         total_classes=total_classes,
 
@@ -685,7 +801,6 @@ def edit(student_id):
         student_id
     )
 
-
     if student is None:
 
         flash(
@@ -698,7 +813,6 @@ def edit(student_id):
                 "students_page"
             )
         )
-
 
     if request.method == "POST":
 
@@ -716,7 +830,6 @@ def edit(student_id):
             "course",
             ""
         ).strip()
-
 
         # ----------------------------------------------------
         # VALIDATION
@@ -738,7 +851,6 @@ def edit(student_id):
                 student=student
             )
 
-
         # ----------------------------------------------------
         # NEW PHOTO
         # ----------------------------------------------------
@@ -748,7 +860,6 @@ def edit(student_id):
         )
 
         photo_filename = None
-
 
         if photo and photo.filename:
 
@@ -766,11 +877,9 @@ def edit(student_id):
                     student=student
                 )
 
-
             original_name = secure_filename(
                 photo.filename
             )
-
 
             extension = (
                 original_name
@@ -781,17 +890,14 @@ def edit(student_id):
                 .lower()
             )
 
-
             photo_filename = (
                 f"student_{student['rollno']}.{extension}"
             )
-
 
             photo.save(
                 UPLOAD_FOLDER
                 / photo_filename
             )
-
 
             # ------------------------------------------------
             # REMOVE OLD PHOTO
@@ -815,7 +921,6 @@ def edit(student_id):
 
                     old_photo_path.unlink()
 
-
         # ----------------------------------------------------
         # UPDATE STUDENT
         # ----------------------------------------------------
@@ -828,12 +933,10 @@ def edit(student_id):
             photo_filename
         )
 
-
         flash(
             "Student updated successfully.",
             "success"
         )
-
 
         return redirect(
             url_for(
@@ -841,7 +944,6 @@ def edit(student_id):
                 student_id=student_id
             )
         )
-
 
     return render_template(
         "edit_student.html",
@@ -863,7 +965,6 @@ def delete(student_id):
         student_id
     )
 
-
     if student is None:
 
         flash(
@@ -876,7 +977,6 @@ def delete(student_id):
                 "students_page"
             )
         )
-
 
     # --------------------------------------------------------
     # DELETE PHOTO
@@ -890,9 +990,7 @@ def delete(student_id):
         )
 
         if photo_path.exists():
-
             photo_path.unlink()
-
 
     # --------------------------------------------------------
     # DELETE STUDENT
@@ -902,12 +1000,10 @@ def delete(student_id):
         student_id
     )
 
-
     flash(
         "Student deleted successfully.",
         "success"
     )
-
 
     return redirect(
         url_for(
@@ -918,6 +1014,7 @@ def delete(student_id):
 
 # ============================================================
 # ATTENDANCE
+# TEACHER + ADMIN
 # ============================================================
 
 @app.route(
@@ -931,7 +1028,6 @@ def attendance(student_id):
         student_id
     )
 
-
     if student is None:
 
         flash(
@@ -944,7 +1040,6 @@ def attendance(student_id):
                 "students_page"
             )
         )
-
 
     # --------------------------------------------------------
     # UPDATE ATTENDANCE
@@ -962,7 +1057,6 @@ def attendance(student_id):
             "0"
         )
 
-
         try:
 
             update_attendance(
@@ -971,12 +1065,10 @@ def attendance(student_id):
                 attended_classes
             )
 
-
             flash(
                 "Attendance updated successfully.",
                 "success"
             )
-
 
             return redirect(
                 url_for(
@@ -984,7 +1076,6 @@ def attendance(student_id):
                     student_id=student_id
                 )
             )
-
 
         except (
             ValueError,
@@ -996,7 +1087,6 @@ def attendance(student_id):
                 "error"
             )
 
-
     # --------------------------------------------------------
     # GET ATTENDANCE
     # --------------------------------------------------------
@@ -1005,18 +1095,20 @@ def attendance(student_id):
         student_id
     )
 
-
     return render_template(
         "attendance.html",
 
         student=student,
 
-        attendance=attendance_data
+        attendance=attendance_data,
+
+        student_view=False
     )
 
 
 # ============================================================
 # RESULT
+# TEACHER + ADMIN
 # ============================================================
 
 @app.route(
@@ -1030,7 +1122,6 @@ def result(student_id):
         student_id
     )
 
-
     if student is None:
 
         flash(
@@ -1043,7 +1134,6 @@ def result(student_id):
                 "students_page"
             )
         )
-
 
     # --------------------------------------------------------
     # ADD RESULT
@@ -1066,7 +1156,6 @@ def result(student_id):
             "100"
         )
 
-
         try:
 
             add_result(
@@ -1076,12 +1165,10 @@ def result(student_id):
                 max_marks
             )
 
-
             flash(
                 "Result added successfully.",
                 "success"
             )
-
 
             return redirect(
                 url_for(
@@ -1089,7 +1176,6 @@ def result(student_id):
                     student_id=student_id
                 )
             )
-
 
         except (
             ValueError,
@@ -1101,7 +1187,6 @@ def result(student_id):
                 "error"
             )
 
-
     # --------------------------------------------------------
     # GET RESULTS
     # --------------------------------------------------------
@@ -1110,11 +1195,9 @@ def result(student_id):
         student_id
     )
 
-
     result_summary = get_result_summary(
         student_id
     )
-
 
     return render_template(
         "result.html",
@@ -1123,12 +1206,15 @@ def result(student_id):
 
         results=results,
 
-        result_summary=result_summary
+        result_summary=result_summary,
+
+        student_view=False
     )
 
 
 # ============================================================
 # DELETE RESULT
+# TEACHER + ADMIN
 # ============================================================
 
 @app.post(
@@ -1141,12 +1227,10 @@ def result_delete(result_id):
         result_id
     )
 
-
     flash(
         "Result deleted successfully.",
         "success"
     )
-
 
     return redirect(
         request.referrer

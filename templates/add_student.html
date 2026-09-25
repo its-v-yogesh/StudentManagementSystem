@@ -6,180 +6,266 @@ Add Student | Student Management
 
 {% block content %}
 
-<div class="page-header">
+<div class="add-student-page">
 
-    <div>
-        <p class="eyebrow">STUDENT RECORDS</p>
+    <!-- =========================
+         PAGE HEADER
+    ========================== -->
 
-        <h1>Add New Student</h1>
+    <div class="add-student-header">
 
-        <p>
-            Enter student information and upload a profile picture.
-        </p>
-    </div>
+        <div class="add-student-heading">
 
-    <a
-        href="{{ url_for('students_page') }}"
-        class="secondary-btn"
-    >
-        ← Back to Students
-    </a>
-
-</div>
-
-
-<div class="form-card">
-
-    <form
-        method="POST"
-        action="{{ url_for('add') }}"
-        enctype="multipart/form-data"
-    >
-
-        <!-- =========================
-             STUDENT PHOTO
-        ========================== -->
-
-        <div class="photo-upload-section">
-
-            <div
-                id="photoPreview"
-                class="photo-preview"
-            >
-                <span>👤</span>
+            <div class="add-student-icon">
+                +
             </div>
 
-            <div class="photo-upload-content">
-
-                <label for="photo">
-                    Student Picture
-                </label>
-
-                <p>
-                    Upload JPG, JPEG, PNG or WEBP
-                    (recommended square image).
+            <div>
+                <p class="add-student-eyebrow">
+                    STUDENT RECORDS
                 </p>
 
-                <input
-                    type="file"
-                    id="photo"
-                    name="photo"
-                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                    onchange="previewStudentPhoto(this)"
-                >
+                <h1>
+                    Add New Student
+                </h1>
 
+                <p>
+                    Create a new student profile and add their basic information.
+                </p>
             </div>
 
         </div>
 
+        <a
+            href="{{ url_for('students_page') }}"
+            class="add-student-back-btn"
+        >
+            ← Back to Students
+        </a>
 
-        <!-- =========================
-             BASIC INFORMATION
-        ========================== -->
+    </div>
 
-        <div class="form-row">
 
-            <div class="form-group">
+    <!-- =========================
+         MAIN FORM CARD
+    ========================== -->
 
-                <label for="rollno">
-                    Roll Number
-                </label>
+    <div class="add-student-card">
 
-                <input
-                    type="text"
-                    id="rollno"
-                    name="rollno"
-                    placeholder="Enter roll number"
-                    required
-                >
+        <div class="add-student-card-header">
 
+            <div>
+                <h2>Student Information</h2>
+
+                <p>
+                    Fill in the details below to register a new student.
+                </p>
             </div>
 
-
-            <div class="form-group">
-
-                <label for="name">
-                    Student Name
-                </label>
-
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Enter student name"
-                    required
-                >
-
-            </div>
+            <span class="required-badge">
+                * Required
+            </span>
 
         </div>
 
 
-        <!-- =========================
-             CONTACT INFORMATION
-        ========================== -->
+        <form
+            method="POST"
+            action="{{ url_for('add') }}"
+            enctype="multipart/form-data"
+        >
 
-        <div class="form-row">
+            <!-- =========================
+                 PHOTO SECTION
+            ========================== -->
 
-            <div class="form-group">
+            <div class="add-photo-section">
 
-                <label for="email">
-                    Email Address
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="student@example.com"
-                    required
+                <div
+                    id="photoPreview"
+                    class="add-photo-preview"
                 >
+                    <span>👤</span>
+                </div>
+
+                <div class="add-photo-content">
+
+                    <div class="add-photo-title">
+                        Student Picture
+                    </div>
+
+                    <p>
+                        Upload a profile picture for the student.
+                        JPG, JPEG, PNG and WEBP are supported.
+                    </p>
+
+                    <label
+                        for="photo"
+                        class="choose-photo-btn"
+                    >
+                        📷 Choose Photo
+                    </label>
+
+                    <input
+                        type="file"
+                        id="photo"
+                        name="photo"
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                        onchange="previewStudentPhoto(this)"
+                        class="photo-file-input"
+                    >
+
+                    <span class="photo-hint">
+                        Recommended: square image
+                    </span>
+
+                </div>
 
             </div>
 
 
-            <div class="form-group">
+            <!-- =========================
+                 BASIC INFORMATION
+            ========================== -->
 
-                <label for="course">
-                    Course
-                </label>
+            <div class="add-section-heading">
 
-                <input
-                    type="text"
-                    id="course"
-                    name="course"
-                    placeholder="e.g. BCA"
-                    required
-                >
+                <span class="section-icon">
+                    👤
+                </span>
+
+                <div>
+                    <h3>Basic Information</h3>
+                    <p>Enter the student's identification details.</p>
+                </div>
 
             </div>
 
-        </div>
+
+            <div class="add-student-grid">
+
+                <div class="modern-input-group">
+
+                    <label for="rollno">
+                        Roll Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="rollno"
+                        name="rollno"
+                        class="modern-input"
+                        placeholder="Enter roll number"
+                        required
+                    >
+
+                </div>
 
 
-        <!-- =========================
-             BUTTONS
-        ========================== -->
+                <div class="modern-input-group">
 
-        <div class="form-actions">
+                    <label for="name">
+                        Student Name
+                    </label>
 
-            <a
-                href="{{ url_for('students_page') }}"
-                class="secondary-btn"
-            >
-                Cancel
-            </a>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="modern-input"
+                        placeholder="Enter student name"
+                        required
+                    >
 
-            <button
-                type="submit"
-                class="primary-btn"
-            >
-                + Add Student
-            </button>
+                </div>
 
-        </div>
+            </div>
 
-    </form>
+
+            <!-- =========================
+                 CONTACT INFORMATION
+            ========================== -->
+
+            <div class="add-section-heading contact-heading">
+
+                <span class="section-icon">
+                    ✉
+                </span>
+
+                <div>
+                    <h3>Academic & Contact Information</h3>
+                    <p>Provide the student's email and course details.</p>
+                </div>
+
+            </div>
+
+
+            <div class="add-student-grid">
+
+                <div class="modern-input-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="modern-input"
+                        placeholder="student@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="modern-input-group">
+
+                    <label for="course">
+                        Course
+                    </label>
+
+                    <input
+                        type="text"
+                        id="course"
+                        name="course"
+                        class="modern-input"
+                        placeholder="e.g. BCA"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 FORM ACTIONS
+            ========================== -->
+
+            <div class="add-student-actions">
+
+                <a
+                    href="{{ url_for('students_page') }}"
+                    class="add-cancel-btn"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="add-save-btn"
+                >
+                    <span>+</span>
+                    Add Student
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
 
